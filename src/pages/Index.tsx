@@ -1,14 +1,50 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import { LandingPage } from "@/components/LandingPage";
+import { AuthForm } from "@/components/AuthForm";
+import { StudentDashboard } from "@/components/StudentDashboard";
+import { RecruiterDashboard } from "@/components/RecruiterDashboard";
 
 const Index = () => {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
-    </div>
-  );
+  const [currentView, setCurrentView] = useState<"landing" | "auth" | "dashboard">("landing");
+  const [userRole, setUserRole] = useState<string>("");
+  const [userEmail, setUserEmail] = useState<string>("");
+
+  const handleGetStarted = () => {
+    setCurrentView("auth");
+  };
+
+  const handleLogin = (role: string, email: string) => {
+    setUserRole(role);
+    setUserEmail(email);
+    setCurrentView("dashboard");
+  };
+
+  const handleLogout = () => {
+    setUserRole("");
+    setUserEmail("");
+    setCurrentView("landing");
+  };
+
+  if (currentView === "landing") {
+    return <LandingPage onGetStarted={handleGetStarted} />;
+  }
+
+  if (currentView === "auth") {
+    return <AuthForm onLogin={handleLogin} />;
+  }
+
+  if (currentView === "dashboard") {
+    if (userRole === "student") {
+      return <StudentDashboard userEmail={userEmail} onLogout={handleLogout} />;
+    }
+    if (userRole === "recruiter") {
+      return <RecruiterDashboard userEmail={userEmail} onLogout={handleLogout} />;
+    }
+    // Admin dashboard would go here
+    return <div>Admin dashboard coming soon...</div>;
+  }
+
+  return null;
 };
 
 export default Index;
